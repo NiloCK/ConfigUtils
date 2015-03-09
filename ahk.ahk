@@ -2,6 +2,8 @@ SetTitleMatchMode, RegEx
 
 #!p:: WinActivate, Windows PowerShell|posh.*
 #!v:: WinActivate, .*Microsoft Visual Studio$
+#!j:: WinActivate, .*Mozilla Firefox$
+#!s:: WinActivate, .*Sublime Text 2.*
 
 CapsLock::
 if GetKeyState("LCtrl", "p")
@@ -10,3 +12,4 @@ else if GetKeyState(";", "p")
   send, {Enter}
 else
   send, {End}
+Return
