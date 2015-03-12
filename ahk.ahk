@@ -1,7 +1,7 @@
 SetTitleMatchMode, RegEx
 
 #!p:: WinActivate, Windows PowerShell|posh.*
-#!v:: WinActivate, .*Microsoft Visual Studio$
+#!v:: WinActivate, .*Microsoft Visual Studio.*
 #!j:: WinActivate, .*Mozilla Firefox$
 #!s:: WinActivate, .*Sublime Text 2.*
 
