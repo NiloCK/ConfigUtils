@@ -1,5 +1,6 @@
 SetTitleMatchMode, RegEx
 
+#!a:: WinActivate, .*Atom.*
 #!p:: WinActivate, .*Windows PowerShell.*|posh.*
 #!v:: WinActivate, .*Microsoft Visual Studio.*
 #!j:: WinActivate, .*Mozilla Firefox$
