@@ -10,8 +10,6 @@ SetTitleMatchMode, RegEx
 
 z::p
 p::z
-o::x
-x::o
 
 CapsLock::
 if GetKeyState("LCtrl", "p")
