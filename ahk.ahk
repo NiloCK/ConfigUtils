@@ -6,6 +6,12 @@ SetTitleMatchMode, RegEx
 #!j:: WinActivate, .*Mozilla Firefox$
 #!s:: WinActivate, .*Sublime Text 2.*
 #!o:: WinActivate, .*Microsoft Outlook.*
+#!h:: WinActivate, .*HexChat.*
+
+z::p
+p::z
+o::x
+x::o
 
 CapsLock::
 if GetKeyState("LCtrl", "p")
