@@ -11,6 +11,9 @@ SetTitleMatchMode, RegEx
 z::p
 p::z
 
+<!RAlt::Send {Escape}
+>!LAlt::Send {Escape}
+
 CapsLock::
 if GetKeyState("LCtrl", "p")
   send, {CapsLock}
