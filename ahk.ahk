@@ -42,6 +42,9 @@ Hotkeys here effect physical keys as written, and do not
 <^x::HotkeyWarning()
 <^z::HotkeyWarning()
 <^f::HotkeyWarning()
+<^t::HotkeyWarning()
+<^F4::HotkeyWarning()
+<!F4::HotkeyWarning()
 
 ; right handed hotkeys to avoid
 >^o::HotkeyWarning()
