@@ -15,6 +15,7 @@ SetTitleMatchMode, RegEx
 #!s:: WinActivate, .*Sublime Text 2.*
 #!o:: WinActivate, .*Microsoft Outlook.*
 #!h:: WinActivate, .*HexChat.*
+#!c:: WinActivate, .*Visual Studio Code.*
 
 
 ; keyboard remapping (for regular typing)
