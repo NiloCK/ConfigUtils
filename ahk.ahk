@@ -70,3 +70,6 @@ else if GetKeyState(";", "p")
 else
   send, {End}
 Return
+
+; suspend / resume hotkeys
+#!Pause::Suspend
