@@ -23,10 +23,16 @@ $z::Send p
 Z::P
 $p::Send z
 P::Z
+
 $t::Send j
 T::J
 $j::Send t
 J::T
+
+$n::Send k
+N::K
+$k::Send n
+K::N
 
 ; alt + alt -> escape. specifically in place for
 ; mode switching in vim
