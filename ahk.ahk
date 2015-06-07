@@ -34,6 +34,11 @@ N::K
 $k::Send n
 K::N
 
+$o::Send l
+O::L
+$l::Send o
+L::O
+
 ; alt + alt -> escape. specifically in place for
 ; mode switching in vim
 <!RAlt::Send {Escape}
