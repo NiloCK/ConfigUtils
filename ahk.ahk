@@ -34,10 +34,17 @@ N::K
 $k::Send n
 K::N
 
-$o::Send l
-O::L
-$l::Send o
-L::O
+$o::Send d
+O::D
+$d::Send o
+D::O
+
+$f::Send r
+F::R
+$r::Send f
+R::F
+
+
 
 ; alt + alt -> escape. specifically in place for
 ; mode switching in vim
