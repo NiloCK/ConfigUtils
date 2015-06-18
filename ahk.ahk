@@ -20,24 +20,26 @@ SetTitleMatchMode, RegEx
 
 ; keyboard remapping (for regular typing)
 $z::Send p
-Z::P
+$+z::Send p
 $p::Send z
-P::Z
+$+p::Send z
 
 $t::Send j
-T::J
+$+t::Send j
 $j::Send t
-J::T
+$+j::Send t
 
 $n::Send k
-N::K
+$+n::Send k
 $k::Send n
-K::N
+$+k::Send n
 
-$o::Send d
-O::D
+$o::Send v
+$+o::Send v
+$v::Send d
+$+v::Send d
 $d::Send o
-D::O
+$+d::Send o
 
 ; $f::Send r
 ; F::R
