@@ -1,4 +1,4 @@
-; generic warning box that pops when 
+; generic warning box that pops when
 ; user attempts to use a 'stretch' hotkey
 HotkeyWarning()
 {
@@ -33,6 +33,11 @@ $n::Send k
 $+n::Send K
 $k::Send n
 $+k::Send N
+
+$r::Send l
+$+r::Send L
+$l::Send r
+$+l::Send R
 
 $o::Send v
 $+o::Send V
