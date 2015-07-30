@@ -17,6 +17,9 @@ SetTitleMatchMode, RegEx
 #!h:: WinActivate, .*HexChat.*
 #!c:: WinActivate, .*Visual Studio Code.*
 
+; launch the windows snipping tool
+#!n:: Run, snippingtool
+
 
 ; keyboard remapping (for regular typing)
 $z::Send p
