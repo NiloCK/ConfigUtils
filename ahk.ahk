@@ -18,7 +18,13 @@ SetTitleMatchMode, RegEx
 #!c:: WinActivate, .*Visual Studio Code.*
 
 ; launch the windows snipping tool
-#!n:: Run, snippingtool
+#!n::
+Run, snippingtool
+WinWaitActive, ahk_class Microsoft-Windows-Tablet-SnipperToolbar
+{
+    send ^{PrintScreen}
+}
+return
 
 
 ; keyboard remapping (for regular typing)
