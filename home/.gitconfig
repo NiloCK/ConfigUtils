@@ -1,0 +1,13 @@
+[user]
+	name = Colin Kennedy
+	email = colinkennedy@hotmail.com
+[diff]
+	tool = winmerge
+	prompt = false
+[alias]
+	olog = log --pretty=oneline --abbrev-commit
+	glog = log --graph --decorate --oneline --all
+[difftool]
+	prompt = false
+[difftool "winmerge"]
+  cmd = "'C:/Program Files (x86)/WinMerge/WinMergeU.exe'" -e \"$LOCAL\" \"$REMOTE\"
