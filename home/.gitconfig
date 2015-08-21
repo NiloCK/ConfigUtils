@@ -6,6 +6,8 @@
 [alias]
 	olog = log --pretty=oneline --abbrev-commit
 	glog = log --graph --decorate --oneline --all
+	dt = difftool
+	dtd = difftool --dir-diff
 [diff]
 	tool = winmerge
 	prompt = false
