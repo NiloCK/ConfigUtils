@@ -1,6 +1,8 @@
 [user]
 	name = Colin Kennedy
 	email = colinkennedy@hotmail.com
+[push]
+	default = simple
 [diff]
 	tool = winmerge
 	prompt = false
