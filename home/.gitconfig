@@ -3,12 +3,12 @@
 	email = colinkennedy@hotmail.com
 [push]
 	default = simple
-[diff]
-	tool = winmerge
-	prompt = false
 [alias]
 	olog = log --pretty=oneline --abbrev-commit
 	glog = log --graph --decorate --oneline --all
+[diff]
+	tool = winmerge
+	prompt = false
 [difftool]
 	prompt = false
 [difftool "winmerge"]
