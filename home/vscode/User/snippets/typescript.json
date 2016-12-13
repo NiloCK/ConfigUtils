@@ -1,0 +1,112 @@
+{
+/*
+	 // Place your snippets for TypeScript here. Each snippet is defined under a snippet name and has a prefix, body and 
+	 // description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	 // $1, $2 for tab stops, ${id} and ${id:label} and ${1:label} for variables. Variables with the same id are connected.
+	 // Example:
+	 "Print to console": {
+		"prefix": "log",
+		"body": [
+			"console.log('$1');",
+			"$2"
+		],
+		"description": "Log output to console"
+	}
+*/
+	"French Verb":{
+		"prefix": "fv",
+		"body":["\"$1\": {",
+				"\t\"present\": {",
+				"\t\t\"Je\": \"$2\",",
+				"\t\t\"Tu\": \"$3\",",
+				"\t\t\"Il / Elle\": \"$4\",",
+				"\t\t\"Nous\": \"$5\",",
+				"\t\t\"Vous\": \"$6\",",
+				"\t\t\"Ils / Elles\": \"$7\"",
+				"\t},",
+				
+				"\t\"imperfect\": {",
+				"\t\t\"Je\": \"$9\",",
+				"\t\t\"Tu\": \"$10\",",
+				"\t\t\"Il / Elle\": \"$11\",",
+				"\t\t\"Nous\": \"$12\",",
+				"\t\t\"Vous\": \"$13\",",
+				"\t\t\"Ils / Elles\": \"$14\"",
+				"\t},",
+
+				"\t\"subjuctive\": {",
+				"\t\t\"Je\": \"$15\",",
+				"\t\t\"Tu\": \"$16\",",
+				"\t\t\"Il / Elle\": \"$17\",",
+				"\t\t\"Nous\": \"$18\",",
+				"\t\t\"Vous\": \"$19\",",
+				"\t\t\"Ils / Elles\": \"$20\"",
+				"\t},",
+
+				"\t\"future\": {",
+				"\t\t\"Je\": \"$21\",",
+				"\t\t\"Tu\": \"$22\",",
+				"\t\t\"Il / Elle\": \"$23\",",
+				"\t\t\"Nous\": \"$24\",",
+				"\t\t\"Vous\": \"$25\",",
+				"\t\t\"Ils / Elles\": \"$26\"",
+				"\t},",
+
+				"\t\"conditional\": {",
+				"\t\t\"Je\": \"$27\",",
+				"\t\t\"Tu\": \"$28\",",
+				"\t\t\"Il / Elle\": \"$29\",",
+				"\t\t\"Nous\": \"$30\",",
+				"\t\t\"Vous\": \"$31\",",
+				"\t\t\"Ils / Elles\": \"$32\"",
+				"\t},",
+
+				"\t\"historical\": {",
+				"\t\t\"Je\": \"$33\",",
+				"\t\t\"Tu\": \"$34\",",
+				"\t\t\"Il / Elle\": \"$35\",",
+				"\t\t\"Nous\": \"$36\",",
+				"\t\t\"Vous\": \"$37\",",
+				"\t\t\"Ils / Elles\": \"$38\"",
+				"\t},",
+
+				"\t\"imperative\": {",
+				"\t\t\"Tu\": \"$39\",",
+				"\t\t\"Nous\": \"$40\",",
+				"\t\t\"Vous\": \"$41\",",
+				"\t},",
+
+				"\t\"pastP\": \"$42\",",
+				"\t\"presentP\": \"$43\",",
+				"}"
+
+		],
+		"description": "For inputting French verb conjugation data."
+	},
+	"Substitute Teaching record": {
+		"prefix" : "sr",
+		"body":[
+			"{",
+				"\t\"date\": \"2016-$1-$2\",",
+				"\t\"bookingDate\": \"2016-$3-$4\",",
+				// "\t\"school\": \"${5}\",",
+				"\t\"teacher\": teachers$5,",
+				"\t\"ampm\": $7,",
+				"\t\"score\": $8,",
+				"\t\"notes\": \"$9\"",
+			"}$10"
+		],
+		"description": "For entering substitute teaching records."
+	},
+	"Teacher":{
+		"prefix": "teacher",
+		"body": [
+			"\"$1\": {",
+			"\t\"Name\" : \"$2\",",
+			"\t\"School\" : \"$3\",",
+			"\t\"Assignment\" : \"$4\",",
+			"\t\"Notes\" : [$5]",
+			"}$6"
+		]
+	}
+}

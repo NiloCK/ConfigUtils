@@ -1,0 +1,1 @@
+.\Anki\anki.exe -b .\ankidata

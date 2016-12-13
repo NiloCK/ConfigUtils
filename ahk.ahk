@@ -8,7 +8,7 @@ HotkeyWarning()
 ; current window activators for frequently used programs
 SetTitleMatchMode, RegEx
 
-#!a:: WinActivate, .*Atom.*
+#!a:: WinActivate, .*Anki.*
 #!p:: WinActivate, .*Windows PowerShell.*|posh.*
 #!v:: WinActivate, .*Microsoft Visual Studio.*
 #!j:: WinActivate, .*Mozilla Firefox$
@@ -28,8 +28,10 @@ return
 
 
 ; keyboard remapping (for regular typing)
-$z::Send p
-$+z::Send P
+$z::Send b
+$+z::Send B
+$b::Send p
+$+b::Send P
 $p::Send z
 $+p::Send Z
 
@@ -43,10 +45,20 @@ $+n::Send K
 $k::Send n
 $+k::Send N
 
-$r::Send l
-$+r::Send L
-$l::Send r
-$+l::Send R
+; semi-colon key acts as R except when CapsLock is depressed.
+; This allows CapsLock-;-CapsLock as end-;-return combo.
+
+$;::
+if GetKeyState("CapsLock", "p")
+  send, `;
+else
+  send, r
+Return
+
+$+;::Send R
+
+$r::Send `;
+$+r::Send :
 
 $o::Send v
 $+o::Send V
@@ -60,7 +72,14 @@ $+d::Send O
 ; $r::Send f
 ; R::F
 
-
+CapsLock::
+if GetKeyState("LCtrl", "p")
+  send, {CapsLock}
+else if GetKeyState(";", "p")
+  send, {Enter}
+else
+  send, {End}
+Return
 
 ; alt + alt -> escape. specifically in place for
 ; mode switching in vim
@@ -95,15 +114,6 @@ Hotkeys here effect physical keys as written, and do not
 >^m::HotkeyWarning() ; vs
 >^,::HotkeyWarning() ; vs
 >^.::HotkeyWarning() ; vs
-
-CapsLock::
-if GetKeyState("LCtrl", "p")
-  send, {CapsLock}
-else if GetKeyState(";", "p")
-  send, {Enter}
-else
-  send, {End}
-Return
 
 ; suspend / resume hotkeys
 #!Pause::Suspend

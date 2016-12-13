@@ -1,0 +1,1 @@
+/pf/powershell/powershell.exe -NoProfile -NoExit -File /pf/powershell/thumbProfile.ps1

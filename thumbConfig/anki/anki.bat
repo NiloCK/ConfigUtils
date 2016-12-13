@@ -1,0 +1,1 @@
+powershell.exe -NoProfile .\Anki.ps1

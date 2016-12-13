@@ -8,4 +8,4 @@ Get-ChildItem C:\Temp | ForEach-Object {
     }
 }
 
-"This directory is cleaned automatically, nightly. Files older than three days will be deleted. DO NOT STORE THINGS HERE!" > DoNotLeaveThingsHere.txt
+"This directory is cleaned automatically, nightly. Files older than three days will be deleted. DO NOT STORE THINGS HERE!" > C:\Temp\DoNotLeaveThingsHere.txt
