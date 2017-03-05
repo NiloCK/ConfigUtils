@@ -63,9 +63,10 @@ function Thumb-DeployConfig () {
     # lost and found
     Copy-ThumbItem 'dev\ConfigUtils\thumbConfig\READ THIS IF YOU FOUND THIS USB DRIVE.txt' 'READ THIS IF YOU FOUND THIS USB DRIVE.txt'
     
-    # shell config / launcher
+    # shell config / launcher / alias file
     Copy-ThumbItem 'dev\ConfigUtils\thumbConfig\powershell\thumbProfile.ps1' 'pf\powershell\thumbProfile.ps1'
     Copy-ThumbItem 'dev\ConfigUtils\thumbConfig\powershell\ps.bat' 'ps.bat'
+    Copy-ThumbItem 'dev\ConfigUtils\thumbConfig\powershell\thumpm-g.ps1' 'pf\powershell\thumpm-g.ps1'
     
     # anki launchers
     Copy-ThumbItem 'dev\ConfigUtils\thumbConfig\anki\anki.bat' 'pf\Anki\anki.bat'
@@ -96,3 +97,28 @@ function Thumb-ClearTmp () {
 
     "Files older than 3 days will automatically be deleted from this directory." | Out-File (thumbLoc('tmp\readme'))
 }
+function Thumb-Set-NPM-G(){
+    & thumbLoc('pf\powershell\thumpm-g.ps1')
+}
+
+function Thumpm-Install-g ($package){
+    $initialLocation = Get-Location;
+
+    # install the package in 'pf/node_modules'
+    Set-Location thumbLoc("pf");
+#    npm install $package;
+    
+    # write alias to thumpm-g.ps1
+    Add-Content thumbLoc('dev\ConfigUtils\thumbConfig\powershell\thumbpm-g.ps1')
+        -Join "`r`nSet-Thumb-Alias ", $package, (thumbLoc("pf\node_modules\package\bin\")), $package
+    
+    # deploy and run thumpm-g.ps1 to enable the new alias
+    Thumb-DeployConfig;
+    Thumb-Set-NPM-G;
+
+    # reset original location
+    Set-Location $initialLocation;
+}
+
+# enable global NPM packages
+Thumb-Set-NPM-G;
