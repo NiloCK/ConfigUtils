@@ -98,19 +98,24 @@ function Thumb-ClearTmp () {
     "Files older than 3 days will automatically be deleted from this directory." | Out-File (thumbLoc('tmp\readme'))
 }
 function Thumb-Set-NPM-G(){
-    & thumbLoc('pf\powershell\thumpm-g.ps1')
+    & (thumbLoc('pf\powershell\thumpm-g.ps1'))
 }
 
 function Thumpm-Install-g ($package){
     $initialLocation = Get-Location;
 
     # install the package in 'pf/node_modules'
-    Set-Location thumbLoc("pf");
-#    npm install $package;
+    Set-Location (thumbLoc('pf'))
+    npm install $package;
     
     # write alias to thumpm-g.ps1
-    Add-Content thumbLoc('dev\ConfigUtils\thumbConfig\powershell\thumbpm-g.ps1')
-        -Join "`r`nSet-Thumb-Alias ", $package, (thumbLoc("pf\node_modules\package\bin\")), $package
+    $file = thumbLoc('dev\ConfigUtils\thumbConfig\powershell\thumpm-g.ps1')
+    $alias = -Join ("`r`nSet-Thumb-Alias ", $package, " pf\node_modules\", $package, "\bin\", $package)
+    Write-Host "adding:"
+    write-host $alias
+    Write-Host "to:"
+    write-host $file
+    Add-Content $file $alias
     
     # deploy and run thumpm-g.ps1 to enable the new alias
     Thumb-DeployConfig;
