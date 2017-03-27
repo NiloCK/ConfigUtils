@@ -16,6 +16,7 @@ SetTitleMatchMode, RegEx
 #!o:: WinActivate, .*Microsoft Outlook.*
 #!h:: WinActivate, .*HexChat.*
 #!c:: WinActivate, .*Visual Studio Code.*
+#!l:: WinActivate, .*Lynda.com.*
 
 ; launch the windows snipping tool
 #!n::
