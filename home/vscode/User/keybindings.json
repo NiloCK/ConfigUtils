@@ -2,9 +2,9 @@
 [
     {
         "key": "ctrl+shift+alt+,",
-        "command": "workbench.action.moveEditorToLeftGroup"
+        "command": "workbench.action.moveEditorToPreviousGroup"
     },{
         "key": "ctrl+shift+alt+.",
-        "command": "workbench.action.moveEditorToRightGroup"
+        "command": "workbench.action.moveEditorToNextGroup"
     }
 ]

@@ -6,3 +6,6 @@
 /home/vscode/User/workspaceStorage
 /home/vscode/Cache
 /home/vscode/Cookies*
+/home/vscode/CachedData
+/home/vscode/Backups
+/home/vscode/**/*.backup
