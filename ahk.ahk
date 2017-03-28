@@ -16,7 +16,7 @@ ToggleLyndaPause(){
 SetTitleMatchMode, RegEx
 
 #!a:: WinActivate, .*Anki.*
-#!p:: WinActivate, .*Windows PowerShell.*|posh.*
+#!p:: WinActivate, .*Windows PowerShell.*|posh.*|npm.*
 #!v:: WinActivate, .*Microsoft Visual Studio.*
 #!j:: WinActivate, .*Mozilla Firefox$
 #!s:: WinActivate, .*Sublime Text 2.*
