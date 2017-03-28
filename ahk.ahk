@@ -14,6 +14,15 @@ ToggleLyndaPause(){
   Sleep, 35
   WinActivate, ahk_id %original%
 }
+LyndaLeft(){
+  WinGet, original, ID, A
+  Sleep, 15
+  WinActivate, .*Lynda.com.*
+  Sleep, 85
+  Send {Left}
+  Sleep, 35
+  WinActivate, ahk_id %original%
+}
 
 ; current window activators for frequently used programs
 SetTitleMatchMode, RegEx
@@ -27,6 +36,7 @@ SetTitleMatchMode, RegEx
 #!c:: WinActivate, .*Visual Studio Code.*
 #!l:: WinActivate, .*Lynda.com.*
 #!o::ToggleLyndaPause()
+#!i::LyndaLeft()
 
 
 ; launch the windows snipping tool
