@@ -7,8 +7,11 @@ HotkeyWarning()
 ToggleLyndaPause(){
   ;ControlSend, ,{space}, Lynda.com ; can't get this to work!
   WinGet, original, ID, A
+  Sleep, 15
   WinActivate, .*Lynda.com.*
+  Sleep, 85
   Send {Space}
+  Sleep, 35
   WinActivate, ahk_id %original%
 }
 
