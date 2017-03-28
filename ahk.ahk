@@ -4,6 +4,13 @@ HotkeyWarning()
 {
 	MsgBox, No one-handed hotkeys!
 }
+ToggleLyndaPause(){
+  ;ControlSend, ,{space}, Lynda.com ; can't get this to work!
+  WinGet, original, ID, A
+  WinActivate, .*Lynda.com.*
+  Send {Space}
+  WinActivate, ahk_id %original%
+}
 
 ; current window activators for frequently used programs
 SetTitleMatchMode, RegEx
@@ -13,10 +20,11 @@ SetTitleMatchMode, RegEx
 #!v:: WinActivate, .*Microsoft Visual Studio.*
 #!j:: WinActivate, .*Mozilla Firefox$
 #!s:: WinActivate, .*Sublime Text 2.*
-#!o:: WinActivate, .*Microsoft Outlook.*
 #!h:: WinActivate, .*HexChat.*
 #!c:: WinActivate, .*Visual Studio Code.*
 #!l:: WinActivate, .*Lynda.com.*
+#!o::ToggleLyndaPause()
+
 
 ; launch the windows snipping tool
 #!n::
