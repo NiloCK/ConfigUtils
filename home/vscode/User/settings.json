@@ -5,7 +5,9 @@
 
     "terminal.integrated.shell.windows": "f:\\ps.bat",
     "workbench.welcome.enabled": false,
-    "workbench.colorTheme": "Default Light+",
+    "workbench.colorTheme": "Monokai Dimmed",
 
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "window.zoomLevel": 0,
+    "workbench.iconTheme": "vs-seti"
 }
