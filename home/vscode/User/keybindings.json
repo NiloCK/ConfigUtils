@@ -3,8 +3,19 @@
     {
         "key": "ctrl+shift+alt+,",
         "command": "workbench.action.moveEditorToPreviousGroup"
-    },{
+    },
+    {
         "key": "ctrl+shift+alt+.",
         "command": "workbench.action.moveEditorToNextGroup"
+    },
+    {
+        "key": "ctrl+f8",
+        "command": "workbench.action.compareEditor.nextChange",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+f8",
+        "command": "workbench.action.compareEditor.previousChange",
+        "when": "editorTextFocus"
     }
 ]

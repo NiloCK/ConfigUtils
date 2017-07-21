@@ -1,21 +1,25 @@
 // Place your settings in this file to overwrite the default settings
 {
     "explorer.openEditors.visible": 0,
+    "explorer.autoReveal": false,
     "diffEditor.renderSideBySide": false,
     //
-    "terminal.integrated.shell.windows": "f:\\ps.bat",
+    //"terminal.integrated.shell.windows": "f:\\ps.bat",
+    "terminal.integrated.shell.windows": "C:\\WINDOWS\\Sysnative\\WindowsPowerShell\\v1.0\\powershell.exe",
     "workbench.welcome.enabled": false,
-    "workbench.colorTheme": "Monokai Dimmed",
     //
     "editor.formatOnSave": true,
     "window.zoomLevel": 0,
     "workbench.iconTheme": "vs-seti",
     //
     "workbench.editor.enablePreviewFromQuickOpen": false,
+    "workbench.editor.enablePreview": false,
     //
     "todohighlight.isEnable": true,
     "todohighlight.isCaseSensitive": false,
     "todohighlight.keywords": [
         "todo"
-    ]
+    ],
+    "typescript.check.tscVersion": false,
+    "git.enableSmartCommit": true
 }
