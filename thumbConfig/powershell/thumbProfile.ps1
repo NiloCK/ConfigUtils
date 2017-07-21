@@ -9,7 +9,7 @@ $driveLetter = $driveLetter.Drive.Name
 ## Takes a relative path and replaces it with the absolute path of
 ## the current session, respecting the drive letter of the thumb drive 
 function thumbLoc () {
-    return (-join ($driveLetter, ":\", $args[0]))
+    return ( -join ($driveLetter, ":\", $args[0]))
 }
 
 $profile = thumbLoc('pf\Powershell\thumbProfile.ps1'); 
@@ -36,10 +36,11 @@ Set-Thumb-Alias yt          'pf\ytdl\youtube-dl.exe'
 Set-Thumb-Alias ahk         'ahk.exe'
 Set-Thumb-Alias ahkCompile  'pf\AutoHotkey\Compiler\Ahk2Exe.exe'
 Set-Thumb-Alias sqlb        'pf\sqliteBrowser\SQLiteDatabaseBrowserPortable.exe'
+Set-Thumb-Alias curl        'pf\curl\bin\curl.exe'
 
 function code ($loc) {
     $dataDir = thumbLoc('dev\ConfigUtils\home\vscode')
-    $dataDir = (-join ('--user-data-dir ', $dataDir)).ToString()
+    $dataDir = ( -join ('--user-data-dir ', $dataDir)).ToString()
 
     Start-Process -FilePath (thumbLoc('pf\VSCode\Bin\Code.cmd')) -ArgumentList ($dataDir), ($loc) -WindowStyle Hidden
 }
@@ -51,7 +52,7 @@ function Thumb-PullRepos () {
     $location = Get-Location;
 
     Get-ChildItem "C:\thumbRepos" | ForEach-Object {
-        Write-Host (-Join "Updating:", $_.Name) -BackgroundColor Blue -ForegroundColor "Red"
+        Write-Host ( -Join "Updating:", $_.Name) -BackgroundColor Blue -ForegroundColor "Red"
         Set-Location $_.FullName;
         git pull;
     }
@@ -90,18 +91,18 @@ function Thumb-ClearTmp () {
     $date = $date.AddDays(-3);
 
     Get-ChildItem (thumbLoc('tmp')) | ForEach-Object {
-        if ($_.LastWriteTime -le $date){
+        if ($_.LastWriteTime -le $date) {
             Remove-Item $_.FullName
         }
     }
 
     "Files older than 3 days will automatically be deleted from this directory." | Out-File (thumbLoc('tmp\readme'))
 }
-function Thumb-Set-NPM-G(){
+function Thumb-Set-NPM-G() {
     & (thumbLoc('pf\powershell\thumpm-g.ps1'))
 }
 
-function Thumpm-Install-g ($package){
+function Thumpm-Install-g ($package) {
     $initialLocation = Get-Location;
 
     # install the package in 'pf/node_modules'
