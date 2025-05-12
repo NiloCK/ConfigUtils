@@ -500,6 +500,7 @@ __update_dot_bashrc_from_github() {
         # Compare with the local .colin.bashrc
         # `cmp -s` is silent and returns 0 if files are the same, 1 if different, >1 on error.
         if [ -f "$local_bashrc_path" ] && cmp -s "$temp_download_path" "$local_bashrc_path"; then
+            :
             # echo "[$(date)] Local .colin.bashrc is already up-to-date." >> "$log_file"
         else
             if [ ! -f "$local_bashrc_path" ]; then
