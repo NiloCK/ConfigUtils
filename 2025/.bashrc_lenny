@@ -1,0 +1,10 @@
+export GOPATH=$HOME/go
+export PATH=$PATH:/usr/local/go/bin/:$GOPATH/bin
+export PATH=$PATH:/home/colin/.local/bin
+
+export DENO_INSTALL="/home/colin/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
+alias cmk="git branch --list | grep cmk"
+
+alias gc='f(){ NAMESPACE=$(echo $1 | cut -d'/' -f1); REPO=$(echo $1 | cut -d'/' -f2); mkdir -p "$NAMESPACE" && cd "$NAMESPACE" && git clone "http://github.com/$1"; }; f'

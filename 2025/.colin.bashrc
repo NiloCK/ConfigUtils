@@ -190,7 +190,199 @@ fi
 # Worktree Utility  #
 #####################
 
+# Helper for logging - consider making these unique if adding to a shared bashrc
+# to avoid conflicts, e.g., __colin_rmt_log
+_rmt_log() { echo "[rmt] $1"; }
+_rmt_err() { echo >&2 "[rmt] ERROR: $1"; }
 
+function rmt() {
+    local branch_name="$1"
+    if [ -z "$branch_name" ]; then
+        _rmt_err "Usage: rmt <branch_name>"
+        _rmt_log "Removes the Git worktree directory and branch for <branch_name>."
+        _rmt_log "Ensures commits are merged into main/master/trunk/develop first."
+        return 1
+    fi
+
+    # --- Determine git_context_dir (any worktree in the repo) and paths ---
+    local git_context_dir=""
+    local worktree_parent_dir=""
+    local original_cwd=$(pwd) # Not strictly used here but good practice from nt
+
+    if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+        git_context_dir=$(git rev-parse --show-toplevel)
+        if [ -z "$git_context_dir" ]; then
+            _rmt_err "Could not determine Git repository top-level from current directory $(pwd)."
+            return 1
+        fi
+        _rmt_log "Operating relative to Git repository context: $git_context_dir"
+    else
+        _rmt_log "Not currently inside a Git repository. Checking for 'main', 'master', or 'trunk' subdirectories in $(pwd)..."
+        local found_project_subdir=false
+        for subdir_name in main master trunk; do
+            if [ -d "./$subdir_name" ]; then
+                # Use a subshell to cd and run git command
+                local potential_repo_dir
+                potential_repo_dir=$( (cd "./$subdir_name" && git rev-parse --show-toplevel) 2>/dev/null)
+
+                if [ -n "$potential_repo_dir" ]; then
+                    git_context_dir="$potential_repo_dir" # This will be an absolute path
+                    _rmt_log "Found Git repository context via subdirectory './$subdir_name'. Context: $git_context_dir"
+                    found_project_subdir=true
+                    break
+                fi
+            fi
+        done
+        if ! $found_project_subdir; then
+            _rmt_err "Not in a Git repository and no 'main', 'master', or 'trunk' subdirectory in $(pwd) appears to be a Git repository."
+            return 1
+        fi
+    fi
+
+    # Ensure git_context_dir is an absolute path
+    git_context_dir=$(readlink -f "$git_context_dir")
+    worktree_parent_dir=$(dirname "$git_context_dir")
+    local target_worktree_path="$worktree_parent_dir/$branch_name"
+
+    # --- Validations ---
+    if [ "$target_worktree_path" == "$git_context_dir" ]; then
+        _rmt_err "Cannot remove the worktree '$branch_name' because its path ($target_worktree_path) is the same as the current git context directory."
+        _rmt_log "This typically means you're trying to remove the main/master/trunk worktree itself, or the branch name matches the current worktree's directory name."
+        return 1
+    fi
+
+    # Check if the branch exists in the repository
+    if ! git -C "$git_context_dir" rev-parse --verify "$branch_name" >/dev/null 2>&1; then
+        _rmt_err "Branch '$branch_name' does not exist in the repository (context: '$git_context_dir')."
+        if [ -d "$target_worktree_path" ]; then
+            _rmt_log "Note: A directory exists at '$target_worktree_path', but no corresponding branch '$branch_name' was found."
+        fi
+        return 1
+    fi
+    _rmt_log "Branch '$branch_name' found in repo (context: '$git_context_dir')."
+
+    # Check if the target worktree directory exists
+    if [ ! -d "$target_worktree_path" ]; then
+        _rmt_err "Worktree directory '$target_worktree_path' does not exist."
+        _rmt_log "If you only want to delete the branch '$branch_name' (after merge checks), do it manually."
+        return 1
+    fi
+    _rmt_log "Worktree directory to remove: '$target_worktree_path'."
+
+    # --- Identify and Update Primary Branch ---
+    local primary_branch=""
+    for pb_candidate in main master trunk develop; do
+        if git -C "$git_context_dir" rev-parse --verify "$pb_candidate" >/dev/null 2>&1; then
+            primary_branch="$pb_candidate"
+            break
+        fi
+    done
+
+    if [ -z "$primary_branch" ]; then
+        _rmt_err "Could not determine a primary branch (main, master, trunk, develop) in context '$git_context_dir'."
+        _rmt_log "Cannot perform merge safety check."
+        return 1
+    fi
+    _rmt_log "Using '$primary_branch' as the primary branch for merge checks."
+
+    _rmt_log "Updating '$primary_branch' in context '$git_context_dir'..."
+    local current_branch_in_context_repo
+    current_branch_in_context_repo=$(git -C "$git_context_dir" symbolic-ref --short HEAD 2>/dev/null)
+    local switched_branch_in_context=false
+
+    if [ "$current_branch_in_context_repo" != "$primary_branch" ]; then
+        _rmt_log "Temporarily switching context repo to '$primary_branch'..."
+        if ! git -C "$git_context_dir" checkout "$primary_branch"; then
+            _rmt_err "Failed to switch context repo to '$primary_branch'. Aborting update and merge check."
+            if [ -n "$current_branch_in_context_repo" ]; then
+                 git -C "$git_context_dir" checkout "$current_branch_in_context_repo" # Best effort
+            fi
+            return 1
+        fi
+        switched_branch_in_context=true
+    fi
+
+    if ! git -C "$git_context_dir" pull --ff-only; then
+        _rmt_err "Failed to pull latest changes for '$primary_branch' using --ff-only in '$git_context_dir'."
+        _rmt_log "The primary branch may have diverged from its remote. Please resolve this manually."
+        if $switched_branch_in_context && [ -n "$current_branch_in_context_repo" ]; then
+            git -C "$git_context_dir" checkout "$current_branch_in_context_repo" # Switch back
+        fi
+        return 1
+    fi
+    _rmt_log "'$primary_branch' updated."
+
+    # Switch context repo back now that primary_branch is updated, before merge check.
+    if $switched_branch_in_context && [ -n "$current_branch_in_context_repo" ]; then
+        _rmt_log "Switching context repo back to '$current_branch_in_context_repo'..."
+        if ! git -C "$git_context_dir" checkout "$current_branch_in_context_repo"; then
+            _rmt_err "Failed to switch context repo back to '$current_branch_in_context_repo'. Current branch in '$git_context_dir' is '$primary_branch'."
+            # This is not fatal for rmt's operation, but user should be aware.
+        fi
+    fi
+
+    # --- Safety Check: Commits Merged ---
+    _rmt_log "Checking if branch '$branch_name' is fully merged into '$primary_branch'..."
+    local unmerged_commits
+    # Lists commits reachable from branch_name but not from primary_branch
+    unmerged_commits=$(git -C "$git_context_dir" rev-list "${primary_branch}..${branch_name}")
+
+    if [ -n "$unmerged_commits" ]; then
+        _rmt_err "Branch '$branch_name' has commits not merged into '$primary_branch'."
+        _rmt_log "Unmerged commits (shown from '$git_context_dir'):"
+        git -C "$git_context_dir" log --oneline --graph "${primary_branch}..${branch_name}"
+        _rmt_log "Please merge or rebase '$branch_name' onto '$primary_branch', or delete manually if intended."
+        return 1
+    fi
+    _rmt_log "Branch '$branch_name' is fully merged into '$primary_branch'."
+
+    # --- Perform Cleanup ---
+    _rmt_log "Attempting to remove worktree for '$branch_name' at '$target_worktree_path'..."
+    # Using --force to ensure directory removal, aligning with "rm -rf" intent.
+    # `git worktree remove` can take the path or (if conventional) the branch name. Path is more explicit.
+    if git -C "$git_context_dir" worktree remove --force "$target_worktree_path"; then
+        _rmt_log "Git worktree at '$target_worktree_path' removed successfully."
+    else
+        _rmt_err "Command 'git worktree remove --force \"$target_worktree_path\"' failed."
+        _rmt_log "This might happen if '$target_worktree_path' wasn't a registered worktree or due to other issues."
+        _rmt_log "As per 'rm -rf' intent, will now attempt to remove the directory if it still exists."
+        if [ -d "$target_worktree_path" ]; then
+            _rmt_log "Forcefully removing directory '$target_worktree_path'..."
+            if rm -rf "$target_worktree_path"; then
+                _rmt_log "Directory '$target_worktree_path' removed."
+            else
+                _rmt_err "Failed to remove directory '$target_worktree_path'. Manual cleanup needed for the directory."
+                # Continue to attempt branch deletion
+            fi
+        else
+             _rmt_log "Directory '$target_worktree_path' no longer exists or was not there."
+        fi
+    fi
+
+    _rmt_log "Attempting to delete local branch '$branch_name'..."
+    if git -C "$git_context_dir" branch -d "$branch_name"; then
+        _rmt_log "Branch '$branch_name' deleted successfully."
+    else
+        _rmt_err "Failed to delete branch '$branch_name' using 'git branch -d'."
+        _rmt_log "This can happen if it's the current branch in '$git_context_dir' or not considered fully merged by HEAD's standards there."
+        _rmt_log "The previous check confirmed it was merged into '$primary_branch'."
+        _rmt_log "If needed, you may use 'git -C \"$git_context_dir\" branch -D \"$branch_name\"' or switch branches in '$git_context_dir'."
+        return 1 # Indicate partial failure if branch deletion failed
+    fi
+
+    _rmt_log "Successfully removed worktree directory and branch for '$branch_name'."
+    echo ""
+    echo "--------------------------------------------------------------------"
+    echo "Worktree and branch '$branch_name' removed."
+    echo "  Repository Context: $git_context_dir"
+    echo "  Removed Worktree:   $target_worktree_path"
+    echo "  Removed Branch:     $branch_name (was merged into $primary_branch)"
+    echo "--------------------------------------------------------------------"
+    echo ""
+    return 0
+}
+
+# Create a new worktree
 function nt() {
     if [ -z "$1" ]; then
         echo "Usage: nt <branch_name>"
@@ -550,3 +742,41 @@ fi
 ########################
 # /Self-update utility #
 ########################
+
+##################
+# BD Utility     #
+##################
+
+function bd() {
+    local bd_dir="$HOME/pn/bd"
+    
+    # Check if ~/pn/bd exists
+    if [ -d "$bd_dir" ]; then
+        # Directory exists, open with zed
+        zed "$bd_dir"
+    else
+        # Directory doesn't exist, need to set up
+        echo "BD directory not found. Setting up..."
+        
+        # Create ~/pn if it doesn't exist
+        if [ ! -d "$HOME/pn" ]; then
+            echo "Creating ~/pn directory..."
+            mkdir -p "$HOME/pn"
+        fi
+        
+        # Clone the repository
+        echo "Cloning bd repository..."
+        if git clone https://github.com/patched-network/bd "$bd_dir"; then
+            echo "Successfully cloned bd repository."
+            # Open with zed after successful clone
+            zed "$bd_dir"
+        else
+            echo "Failed to clone bd repository."
+            return 1
+        fi
+    fi
+}
+
+##################
+# /BD Utility    #
+##################
