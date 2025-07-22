@@ -630,15 +630,18 @@ unset __msb_machine_name
 # Self-update utility #
 #######################
 
-# Fetches the latest .bashrc from a specified URL and updates the local
-# ~/.colin.bashrc if it differs. Runs asynchronously and checks periodically.
+# Generic helper function to update any file from a remote URL
+# Usage: __update_file_from_github "local_path" "remote_url" "file_description"
+__update_file_from_github() {
+    local local_file_path="$1"
+    local remote_url="$2"
+    local file_description="${3:-file}"
 
-__update_dot_bashrc_from_github() {
-    local remote_url="https://raw.githubusercontent.com/NiloCK/ConfigUtils/refs/heads/master/2025/.colin.bashrc"
-    local local_bashrc_path="$HOME/.colin.bashrc" # This is the file that will be updated
-    local temp_download_path="$HOME/.cache/bashrc_github_latest.tmp"
-    local log_file="$HOME/.cache/bashrc_update.log"
-    local last_check_timestamp_file="$HOME/.cache/bashrc_last_github_check"
+    # Extract filename for cache files
+    local filename=$(basename "$local_file_path")
+    local temp_download_path="$HOME/.cache/${filename}_github_latest.tmp"
+    local log_file="$HOME/.cache/config_update.log"
+    local last_check_timestamp_file="$HOME/.cache/${filename}_last_github_check"
     # Check interval: 1 day = 24 * 60 * 60 = 86400 seconds
     local check_interval_seconds=86400
 
@@ -662,7 +665,7 @@ __update_dot_bashrc_from_github() {
             local current_time=$(date +%s)
             if (( (current_time - last_check_time) < check_interval_seconds )); then
                 # Optional: Log that it's too soon, for debugging.
-                # echo "[$(date)] Bashrc GitHub check: Too soon. Last check at $(date -d "@$last_check_time")." >> "$log_file"
+                # echo "[$(date)] $file_description GitHub check: Too soon. Last check at $(date -d "@$last_check_time")." >> "$log_file"
                 return 0 # Exit quietly, too soon to check
             fi
         fi
@@ -672,9 +675,9 @@ __update_dot_bashrc_from_github() {
     # Ensure cleanup of the temporary file on exit/error
     trap 'rm -f "$temp_download_path"' EXIT
 
-    # echo "[$(date)] Starting .colin.bashrc update check from GitHub: $remote_url" >> "$log_file"
+    # echo "[$(date)] Starting $file_description update check from GitHub: $remote_url" >> "$log_file"
 
-    # Fetch the remote .bashrc using curl
+    # Fetch the remote file using curl
     # -s: silent, -S: show error (if not silent), -L: follow redirects
     # --connect-timeout: max time for connection
     # --max-time: max total time for operation
@@ -684,35 +687,35 @@ __update_dot_bashrc_from_github() {
     if curl -sSL --connect-timeout 10 --max-time 30 -o "$temp_download_path" "$remote_url"; then
         # Check if download was successful and file is not empty
         if [ ! -s "$temp_download_path" ]; then
-            echo "[$(date)] ERROR: Downloaded file from $remote_url is empty or download failed (curl succeeded but file empty)." >> "$log_file"
+            echo "[$(date)] ERROR: Downloaded $file_description from $remote_url is empty or download failed (curl succeeded but file empty)." >> "$log_file"
             # trap will clean up temp_download_path
             return 1
         fi
 
-        # Compare with the local .colin.bashrc
+        # Compare with the local file
         # `cmp -s` is silent and returns 0 if files are the same, 1 if different, >1 on error.
-        if [ -f "$local_bashrc_path" ] && cmp -s "$temp_download_path" "$local_bashrc_path"; then
+        if [ -f "$local_file_path" ] && cmp -s "$temp_download_path" "$local_file_path"; then
             :
-            # echo "[$(date)] Local .colin.bashrc is already up-to-date." >> "$log_file"
+            # echo "[$(date)] Local $file_description is already up-to-date." >> "$log_file"
         else
-            if [ ! -f "$local_bashrc_path" ]; then
-                echo "[$(date)] Local .colin.bashrc ($local_bashrc_path) does not exist. Creating new." >> "$log_file"
+            if [ ! -f "$local_file_path" ]; then
+                echo "[$(date)] Local $file_description ($local_file_path) does not exist. Creating new." >> "$log_file"
             else
-                echo "[$(date)] Local .colin.bashrc differs. Updating from $remote_url..." >> "$log_file"
-                # Backup current .colin.bashrc
-                local backup_path="${local_bashrc_path}.bak_$(date +%Y%m%d_%H%M%S)"
-                if cp "$local_bashrc_path" "$backup_path"; then
-                    echo "[$(date)] Backup of current .colin.bashrc created at $backup_path" >> "$log_file"
+                echo "[$(date)] Local $file_description differs. Updating from $remote_url..." >> "$log_file"
+                # Backup current file
+                local backup_path="${local_file_path}.bak_$(date +%Y%m%d_%H%M%S)"
+                if cp "$local_file_path" "$backup_path"; then
+                    echo "[$(date)] Backup of current $file_description created at $backup_path" >> "$log_file"
                 else
-                    echo "[$(date)] WARNING: Failed to create backup of $local_bashrc_path." >> "$log_file"
+                    echo "[$(date)] WARNING: Failed to create backup of $local_file_path." >> "$log_file"
                 fi
             fi
 
-            # Replace local .colin.bashrc with the downloaded one
-            if mv "$temp_download_path" "$local_bashrc_path"; then
-                echo "[$(date)] SUCCESS: $local_bashrc_path updated. Please source it or open a new terminal for changes to take effect." >> "$log_file"
+            # Replace local file with the downloaded one
+            if mv "$temp_download_path" "$local_file_path"; then
+                echo "[$(date)] SUCCESS: $local_file_path updated. Please restart relevant services for changes to take effect." >> "$log_file"
             else
-                echo "[$(date)] ERROR: Failed to move downloaded file to $local_bashrc_path." >> "$log_file"
+                echo "[$(date)] ERROR: Failed to move downloaded file to $local_file_path." >> "$log_file"
                 # trap will clean up temp_download_path if it still exists
                 return 1
             fi
@@ -730,13 +733,30 @@ __update_dot_bashrc_from_github() {
     return 0
 }
 
-# Call the function asynchronously only for interactive shells.
-# Output from the subshell itself (not the function's explicit logging) is also sent to the log file.
+# Fetches the latest .bashrc from GitHub and updates the local ~/.colin.bashrc if it differs
+__update_dot_bashrc_from_github() {
+    __update_file_from_github \
+        "$HOME/.colin.bashrc" \
+        "https://raw.githubusercontent.com/NiloCK/ConfigUtils/refs/heads/master/2025/.colin.bashrc" \
+        ".colin.bashrc"
+}
+
+# Fetches the latest .tmux.conf from GitHub and updates the local ~/.tmux.conf if it differs
+__update_dot_tmux_conf_from_github() {
+    __update_file_from_github \
+        "$HOME/.tmux.conf" \
+        "https://raw.githubusercontent.com/NiloCK/ConfigUtils/refs/heads/master/2025/.tmux.conf" \
+        ".tmux.conf"
+}
+
+# Call the update functions asynchronously only for interactive shells.
+# Output from the subshells (not the functions' explicit logging) is also sent to the log file.
 # `disown` detaches the process from the shell, allowing it to continue if the shell exits.
 if [[ $- == *i* ]]; then # Check if the shell is interactive
     (
         __update_dot_bashrc_from_github
-    ) >> "$HOME/.cache/bashrc_update.log" 2>&1 & disown
+        __update_dot_tmux_conf_from_github
+    ) >> "$HOME/.cache/config_update.log" 2>&1 & disown
 fi
 
 ########################
