@@ -749,7 +749,7 @@ fi
 
 function bd() {
     local bd_dir="$HOME/pn/bd"
-    
+
     # Check if ~/pn/bd exists
     if [ -d "$bd_dir" ]; then
         # Directory exists, open with zed
@@ -757,13 +757,13 @@ function bd() {
     else
         # Directory doesn't exist, need to set up
         echo "BD directory not found. Setting up..."
-        
+
         # Create ~/pn if it doesn't exist
         if [ ! -d "$HOME/pn" ]; then
             echo "Creating ~/pn directory..."
             mkdir -p "$HOME/pn"
         fi
-        
+
         # Clone the repository
         echo "Cloning bd repository..."
         if git clone https://github.com/patched-network/bd "$bd_dir"; then
@@ -779,4 +779,42 @@ function bd() {
 
 ##################
 # /BD Utility    #
+##################
+
+##################
+# CFG Utility    #
+##################
+
+function cfg() {
+    local cfg_dir="$HOME/dev/configutils"
+
+    # Check if ~/dev/configutils exists
+    if [ -d "$cfg_dir" ]; then
+        # Directory exists, open with zed
+        zed "$cfg_dir"
+    else
+        # Directory doesn't exist, need to set up
+        echo "ConfigUtils directory not found. Setting up..."
+
+        # Create ~/dev if it doesn't exist
+        if [ ! -d "$HOME/dev" ]; then
+            echo "Creating ~/dev directory..."
+            mkdir -p "$HOME/dev"
+        fi
+
+        # Clone the repository
+        echo "Cloning configutils repository..."
+        if git clone https://github.com/NiloCK/ConfigUtils "$cfg_dir"; then
+            echo "Successfully cloned configutils repository."
+            # Open with zed after successful clone
+            zed "$cfg_dir"
+        else
+            echo "Failed to clone configutils repository."
+            return 1
+        fi
+    fi
+}
+
+##################
+# /CFG Utility   #
 ##################
