@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=gtm
+Comment=Launch tmux workspace in Ghostty
+Exec=/home/colin/dev/configutils/2025/ghosttyStart.sh
+Terminal=false
+Type=Application
+Categories=Utility;TerminalEmulator;
+Icon=utilities-terminal
