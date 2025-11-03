@@ -66,6 +66,8 @@ alias xo=xdg-open
 alias l="ls -hlX"
 alias y="grep -Pzo \"(?s)\"scripts.\*?\}\" package.json"
 alias lg=lazygit
+alias cs='claude --model sonnet'
+alias ch='claude --model haiku'
 
 alias gl="git log"
 alias glg="git log --graph"
