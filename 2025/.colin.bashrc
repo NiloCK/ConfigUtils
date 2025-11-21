@@ -840,3 +840,45 @@ function cfg() {
 ##################
 # /CFG Utility   #
 ##################
+
+##################
+# Dictate Utility#
+##################
+
+function dictate() {
+    echo "Restarting dictation services..."
+
+    # Try to restart the system service first
+    echo "Restarting dictation.service (system)..."
+    if sudo systemctl restart dictation.service; then
+        echo "✓ dictation.service restarted successfully"
+    else
+        echo "! dictation.service restart failed, trying start..."
+        if sudo systemctl start dictation.service; then
+            echo "✓ dictation.service started successfully"
+        else
+            echo "✗ Failed to start dictation.service"
+            return 1
+        fi
+    fi
+
+    # Try to restart the user service
+    echo "Restarting dication_tray.service (user)..."
+    if systemctl --user restart dication_tray.service; then
+        echo "✓ dication_tray.service restarted successfully"
+    else
+        echo "! dication_tray.service restart failed, trying start..."
+        if systemctl --user start dication_tray.service; then
+            echo "✓ dication_tray.service started successfully"
+        else
+            echo "✗ Failed to start dication_tray.service"
+            return 1
+        fi
+    fi
+
+    echo "All dictation services are running!"
+}
+
+##################
+# /Dictate Utility#
+##################
