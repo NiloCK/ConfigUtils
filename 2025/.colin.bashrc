@@ -863,15 +863,15 @@ function dictate() {
     fi
 
     # Try to restart the user service
-    echo "Restarting dication_tray.service (user)..."
-    if systemctl --user restart dication_tray.service; then
-        echo "✓ dication_tray.service restarted successfully"
+    echo "Restarting dictation_tray.service (user)..."
+    if systemctl --user restart dictation_tray.service; then
+        echo "✓ dictation_tray.service restarted successfully"
     else
-        echo "! dication_tray.service restart failed, trying start..."
-        if systemctl --user start dication_tray.service; then
-            echo "✓ dication_tray.service started successfully"
+        echo "! dictation_tray.service restart failed, trying start..."
+        if systemctl --user start dictation_tray.service; then
+            echo "✓ dictation_tray.service started successfully"
         else
-            echo "✗ Failed to start dication_tray.service"
+            echo "✗ Failed to start dictation_tray.service"
             return 1
         fi
     fi
