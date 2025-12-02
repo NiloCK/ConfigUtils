@@ -97,6 +97,7 @@ if [ -f $HOME/.bash_cleartmp ]; then
   . $HOME/.bash_cleartmp
 fi
 
+nvm use 22
 
 #############################
 #  Command Copying Utility  #
