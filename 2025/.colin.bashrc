@@ -850,13 +850,13 @@ function cfg() {
 function dictate() {
     echo "Restarting dictation services..."
 
-    # Try to restart the system service first
-    echo "Restarting dictation.service (system)..."
-    if sudo systemctl restart dictation.service; then
+    # Restart the main dictation service (user)
+    echo "Restarting dictation.service (user)..."
+    if systemctl --user restart dictation.service; then
         echo "✓ dictation.service restarted successfully"
     else
         echo "! dictation.service restart failed, trying start..."
-        if sudo systemctl start dictation.service; then
+        if systemctl --user start dictation.service; then
             echo "✓ dictation.service started successfully"
         else
             echo "✗ Failed to start dictation.service"
@@ -864,7 +864,7 @@ function dictate() {
         fi
     fi
 
-    # Try to restart the user service
+    # Restart the tray service (user)
     echo "Restarting dictation_tray.service (user)..."
     if systemctl --user restart dictation_tray.service; then
         echo "✓ dictation_tray.service restarted successfully"
