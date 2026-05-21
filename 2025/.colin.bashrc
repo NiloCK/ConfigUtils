@@ -68,7 +68,9 @@ alias y="grep -Pzo \"(?s)\"scripts.\*?\}\" package.json"
 alias lg=lazygit
 alias cs='claude --model sonnet'
 alias ch='claude --model haiku'
-alias co='claude --model opus'
+alias co='claude --model opus --system-prompt "."'
+alias oc='opencode'
+alias wt='bash /home/colin/dev/configutils/2025/weight-tracker.sh'
 
 alias gl="git log"
 alias glg="git log --graph"
