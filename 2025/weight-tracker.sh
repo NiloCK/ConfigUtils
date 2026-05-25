@@ -79,9 +79,9 @@ fi
 
 WEIGHT="$1"
 
-# Validate weight: must be integer
-if ! [[ "$WEIGHT" =~ ^[0-9]+$ ]]; then
-    echo "Error: Weight must be a natural number (integer)"
+# Validate weight: integer or one decimal place
+if ! [[ "$WEIGHT" =~ ^[0-9]+(\.[0-9])?$ ]]; then
+    echo "Error: Weight must be a number with at most one decimal place"
     exit 1
 fi
 
@@ -119,7 +119,7 @@ for ((i=1; i<=DAYS_DIFF; i++)); do
     else
         # Interpolate: linear interpolation with rounding to nearest integer
         CURRENT_WEIGHT=$(awk -v lw="$LAST_WEIGHT" -v nw="$WEIGHT" -v i="$i" -v diff="$DAYS_DIFF" \
-            'BEGIN {printf "%.0f\n", lw + (nw - lw) * i / diff}')
+            'BEGIN {printf "%.1f\n", lw + (nw - lw) * i / diff}')
         INTERPOLATED_COUNT=$((INTERPOLATED_COUNT + 1))
     fi
 
