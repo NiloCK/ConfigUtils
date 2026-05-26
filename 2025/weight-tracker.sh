@@ -71,6 +71,22 @@ if [ $# -eq 0 ]; then
     exit 0
 fi
 
+# === Handle --log / -l ===
+if [ "$1" = "--log" ] || [ "$1" = "-l" ]; then
+    if [ $# -eq 1 ]; then
+        cat "$WEIGHT_LOG"
+    else
+        N="$2"
+        if ! [[ "$N" =~ ^[0-9]+$ ]]; then
+            echo "Error: --log argument must be a positive integer"
+            exit 1
+        fi
+        CUTOFF=$(date -d "today -$N days" +%Y-%m-%d)
+        awk -v cutoff="$CUTOFF" '$1 >= cutoff' "$WEIGHT_LOG"
+    fi
+    exit 0
+fi
+
 # === Input validation for recording new weight ===
 if [ $# -ne 1 ]; then
     echo "Usage: wt [weight]"
