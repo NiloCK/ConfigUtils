@@ -87,6 +87,69 @@ if [ "$1" = "--log" ] || [ "$1" = "-l" ]; then
     exit 0
 fi
 
+# === Handle --graph / -g ===
+if [ "$1" = "--graph" ] || [ "$1" = "-g" ]; then
+    DATA_FILE="$WEIGHT_LOG"
+    CLEANUP_FILES=()
+
+    if [ $# -ge 2 ]; then
+        N="$2"
+        if ! [[ "$N" =~ ^[0-9]+$ ]]; then
+            echo "Error: --graph argument must be a positive integer"
+            exit 1
+        fi
+        CUTOFF=$(date -d "today -$N days" +%Y-%m-%d)
+        DATA_FILE=$(mktemp)
+        CLEANUP_FILES+=("$DATA_FILE")
+        awk -v cutoff="$CUTOFF" '$1 >= cutoff' "$WEIGHT_LOG" > "$DATA_FILE"
+    fi
+
+    SMOOTH_FILE=$(mktemp)
+    CLEANUP_FILES+=("$SMOOTH_FILE")
+    trap "rm -f ${CLEANUP_FILES[*]}" EXIT
+
+    awk '{dates[NR]=$1; weights[NR]=$2}
+    END {
+        for (i=1; i<=NR; i++) {
+            sum=0; count=0
+            start = (i>6) ? i-6 : 1
+            for (j=start; j<=i; j++) { sum+=weights[j]; count++ }
+            printf "%s %.1f\n", dates[i], sum/count
+        }
+    }' "$DATA_FILE" > "$SMOOTH_FILE"
+
+    FIRST_DATE=$(awk 'NR==1{print $1}' "$SMOOTH_FILE")
+    LAST_DATE=$(awk 'END{print $1}' "$SMOOTH_FILE")
+    DAYS_RANGE=$(( ( $(date -d "$LAST_DATE" +%s) - $(date -d "$FIRST_DATE" +%s) ) / 86400 ))
+
+    if [ "$DAYS_RANGE" -lt 60 ]; then
+        XTICS_INTERVAL=604800    # weekly
+        XTICS_FORMAT='%b %d'
+    elif [ "$DAYS_RANGE" -lt 365 ]; then
+        XTICS_INTERVAL=2592000   # ~monthly
+        XTICS_FORMAT='%b %Y'
+    else
+        XTICS_INTERVAL=7862400   # ~quarterly
+        XTICS_FORMAT='%b %Y'
+    fi
+
+    gnuplot -persistent -e "
+        set xdata time;
+        set timefmt '%Y-%m-%d';
+        set format x '$XTICS_FORMAT';
+        set xtics $XTICS_INTERVAL rotate by -45;
+        set xlabel 'Date';
+        set ylabel 'Weight (lbs)';
+        set title 'Weight Log';
+        set grid;
+        set yrange [138:*];
+        plot '$SMOOTH_FILE' using 1:2 with lines lw 2 title '7d avg', \
+             172   with lines lw 1 dt 2 lc 'red'   title 'BMI 24.9 upper (172)', \
+             150.5 with lines lw 1 dt 2 lc 'gray'  title 'BMI midpoint (150.5)'
+    "
+    exit 0
+fi
+
 # === Input validation for recording new weight ===
 if [ $# -ne 1 ]; then
     echo "Usage: wt [weight]"
