@@ -118,6 +118,7 @@ if [ "$1" = "--graph" ] || [ "$1" = "-g" ]; then
         }
     }' "$DATA_FILE" > "$SMOOTH_FILE"
 
+    MAX_WEIGHT=$(awk 'BEGIN{max=0} {if($2>max) max=$2} END{print max+17}' "$DATA_FILE")
     FIRST_DATE=$(awk 'NR==1{print $1}' "$SMOOTH_FILE")
     LAST_DATE=$(awk 'END{print $1}' "$SMOOTH_FILE")
     DAYS_RANGE=$(( ( $(date -d "$LAST_DATE" +%s) - $(date -d "$FIRST_DATE" +%s) ) / 86400 ))
@@ -142,7 +143,7 @@ if [ "$1" = "--graph" ] || [ "$1" = "-g" ]; then
         set ylabel 'Weight (lbs)';
         set title 'Weight Log';
         set grid;
-        set yrange [138:*];
+        set yrange [138:$MAX_WEIGHT];
         plot '$SMOOTH_FILE' using 1:2 with lines lw 2 title '7d avg', \
              172   with lines lw 1 dt 2 lc 'red'   title 'BMI 24.9 upper (172)', \
              150.5 with lines lw 1 dt 2 lc 'gray'  title 'BMI midpoint (150.5)'
