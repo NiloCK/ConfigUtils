@@ -72,6 +72,7 @@ alias co='claude --model opus'
 alias cob='claude --model opus --system-prompt "."'
 alias oc='opencode'
 alias wt='bash /home/colin/dev/configutils/2025/weight-tracker.sh'
+alias td='~/.tuido/tuido'
 
 alias gl="git log"
 alias glg="git log --graph"
