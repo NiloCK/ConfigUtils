@@ -81,6 +81,9 @@ alias glo="git log --oneline"
 alias glog="git log --oneline --graph"
 alias gbl="git for-each-ref --sort=-committerdate refs/heads/ --format='%(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 alias prw="gh pr checks --watch"
+# watch a PR's checks; merge it if they all pass. pass merge flags through, eg:
+#   prwm --squash --delete-branch
+function prwm() { gh pr checks --watch --fail-fast && gh pr merge "$@"; }
 
 alias ..="cd ../"
 alias ...="cd ../../"
