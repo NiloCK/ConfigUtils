@@ -106,6 +106,8 @@ if [ "$1" = "--graph" ] || [ "$1" = "-g" ]; then
 
     SMOOTH_FILE=$(mktemp)
     CLEANUP_FILES+=("$SMOOTH_FILE")
+    SMOOTH_FILE_30=$(mktemp)
+    CLEANUP_FILES+=("$SMOOTH_FILE_30")
     trap "rm -f ${CLEANUP_FILES[*]}" EXIT
 
     awk '{dates[NR]=$1; weights[NR]=$2}
@@ -117,6 +119,16 @@ if [ "$1" = "--graph" ] || [ "$1" = "-g" ]; then
             printf "%s %.1f\n", dates[i], sum/count
         }
     }' "$DATA_FILE" > "$SMOOTH_FILE"
+
+    awk '{dates[NR]=$1; weights[NR]=$2}
+    END {
+        for (i=1; i<=NR; i++) {
+            sum=0; count=0
+            start = (i>29) ? i-29 : 1
+            for (j=start; j<=i; j++) { sum+=weights[j]; count++ }
+            printf "%s %.1f\n", dates[i], sum/count
+        }
+    }' "$DATA_FILE" > "$SMOOTH_FILE_30"
 
     MAX_WEIGHT=$(awk 'BEGIN{max=0} {if($2>max) max=$2} END{print max+17}' "$DATA_FILE")
     FIRST_DATE=$(awk 'NR==1{print $1}' "$SMOOTH_FILE")
@@ -145,6 +157,7 @@ if [ "$1" = "--graph" ] || [ "$1" = "-g" ]; then
         set grid;
         set yrange [138:$MAX_WEIGHT];
         plot '$SMOOTH_FILE' using 1:2 with lines lw 2 title '7d avg', \
+             '$SMOOTH_FILE_30' using 1:2 with lines lw 2 lc 'orange' title '30d avg', \
              172   with lines lw 1 dt 2 lc 'red'   title 'BMI 24.9 upper (172)', \
              150.5 with lines lw 1 dt 2 lc 'gray'  title 'BMI midpoint (150.5)'
     "
